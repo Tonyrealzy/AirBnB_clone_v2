@@ -1,0 +1,1 @@
+This folder contains scripts for my AirBnB_clone_v2/web_flask tasks
