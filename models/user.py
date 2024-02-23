@@ -1,12 +1,12 @@
 #!/usr/bin/python3
-"""This module defines a class User"""
+"""This is the user class"""
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
 
-class User(BaseModel):
-    """This class defines a user by various attributes
+class User(BaseModel, Base):
+    """This is the class for user
     Attributes:
         email: email address
         password: password for you login
@@ -22,4 +22,14 @@ class User(BaseModel):
 
     reviews = relationship('Review', cascade='all, delete', backref='user')
     places = relationship('Place', cascade='all, delete', backref='user')
-    
+
+# """This module defines a class User"""
+# from models.base_model import BaseModel
+
+
+# class User(BaseModel):
+#     """This class defines a user by various attributes"""
+#     email = ''
+#     password = ''
+#     first_name = ''
+#     last_name = ''

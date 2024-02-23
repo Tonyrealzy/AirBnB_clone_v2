@@ -1,40 +1,23 @@
 #!/usr/bin/python3
-"""Flask Web Application for State Information.
+"""Starts a Flask web application.
 
-This script starts a Flask web application that provides information about States.
 The application listens on 0.0.0.0, port 5000.
-
 Routes:
-    /states: Displays an HTML page with a list of all State objects sorted by name.
-    /states/<id>: Displays an HTML page with information about the State with the given <id>.
-
-Requirements:
-    - Flask: You can install it using `pip install Flask`.
-    - models: Ensure the 'models' module is available with the necessary 'State' class.
-
-Usage:
-    Run this script to start the Flask web application.
-
-Author:
-    Your Name
-
+    /states: HTML page with a list of all State objects.
+    /states/<id>: HTML page displaying the given state with <id>.
 """
-
 from models import storage
-from flask import Flask, render_template
+from flask import Flask
+from flask import render_template
 
 app = Flask(__name__)
 
 
 @app.route("/states", strict_slashes=False)
 def states():
-    """Display an HTML page with a list of all States.
+    """Displays an HTML page with a list of all States.
 
     States are sorted by name.
-
-    Returns:
-        str: Rendered HTML page.
-
     """
     states = storage.all("State")
     return render_template("9-states.html", state=states)
@@ -42,15 +25,7 @@ def states():
 
 @app.route("/states/<id>", strict_slashes=False)
 def states_id(id):
-    """Display an HTML page with information about the State with the given <id>.
-
-    Args:
-        id (str): The ID of the State to display.
-
-    Returns:
-        str: Rendered HTML page.
-
-    """
+    """Displays an HTML page with info about <id>, if it exists."""
     for state in storage.all("State").values():
         if state.id == id:
             return render_template("9-states.html", state=state)

@@ -1,6 +1,7 @@
-# Variables
-$nginx_conf = "
-server {
+# Configures a web server for deployment of web_static.
+
+# Nginx configuration file
+$nginx_conf = "server {
     listen 80 default_server;
     listen [::]:80 default_server;
     add_header X-Served-By ${hostname};
@@ -23,53 +24,68 @@ server {
     }
 }"
 
-# Install Nginx package
 package { 'nginx':
   ensure   => 'present',
-  provider => 'apt',
-}
-
-# Create necessary directories
-file { ['/data', '/data/web_static', '/data/web_static/releases', '/data/web_static/releases/test', '/data/web_static/shared']:
-  ensure  => 'directory',
-}
-
-# Create test index.html file
-file { '/data/web_static/releases/test/index.html':
-  ensure  => 'present',
-  content => "Holberton School Puppet\n",
-}
-
-# Create symbolic link to the test release
-file { '/data/web_static/current':
-  ensure => 'link',
-  target => '/data/web_static/releases/test',
-}
-
-# Set ownership of /data directory
-exec { 'chown -R ubuntu:ubuntu /data/':
-  path => '/usr/bin/:/usr/local/bin/:/bin/',
-}
-
-# Create web server directories
-file { ['/var/www', '/var/www/html']:
-  ensure => 'directory',
-}
-
-# Create default index.html and 404.html files
-file { ['/var/www/html/index.html', '/var/www/html/404.html']:
-  ensure  => 'present',
-  content => ["Holberton School Nginx\n", "Ceci n'est pas une page\n"],
-}
-
-# Configure Nginx default site
-file { '/etc/nginx/sites-available/default':
-  ensure  => 'present',
-  content => $nginx_conf,
+  provider => 'apt'
 } ->
 
-# Restart Nginx service
-service { 'nginx':
-  ensure => 'running',
-  enable => true,
+file { '/data':
+  ensure  => 'directory'
+} ->
+
+file { '/data/web_static':
+  ensure => 'directory'
+} ->
+
+file { '/data/web_static/releases':
+  ensure => 'directory'
+} ->
+
+file { '/data/web_static/releases/test':
+  ensure => 'directory'
+} ->
+
+file { '/data/web_static/shared':
+  ensure => 'directory'
+} ->
+
+file { '/data/web_static/releases/test/index.html':
+  ensure  => 'present',
+  content => "Holberton School Puppet\n"
+} ->
+
+file { '/data/web_static/current':
+  ensure => 'link',
+  target => '/data/web_static/releases/test'
+} ->
+
+exec { 'chown -R ubuntu:ubuntu /data/':
+  path => '/usr/bin/:/usr/local/bin/:/bin/'
+}
+
+file { '/var/www':
+  ensure => 'directory'
+} ->
+
+file { '/var/www/html':
+  ensure => 'directory'
+} ->
+
+file { '/var/www/html/index.html':
+  ensure  => 'present',
+  content => "Holberton School Nginx\n"
+} ->
+
+file { '/var/www/html/404.html':
+  ensure  => 'present',
+  content => "Ceci n'est pas une page\n"
+} ->
+
+file { '/etc/nginx/sites-available/default':
+  ensure  => 'present',
+  content => $nginx_conf
+} ->
+
+exec { 'nginx restart':
+  path => '/etc/init.d/'
 }
